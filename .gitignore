@@ -1,0 +1,52 @@
+# -----------------
+# Python / Backend
+# -----------------
+__pycache__/
+*.py[cod]
+*.env
+*.venv
+venv/
+env/
+*.egg-info/
+backend/model/
+backend/*.h5
+backend/*.keras
+backend/*.pb
+backend/*.tflite
+
+# -----------------
+# Logs
+# -----------------
+*.log
+logs/
+
+# -----------------
+# OS files
+# -----------------
+.DS_Store
+Thumbs.db
+
+# -----------------
+# IDE / Editor
+# -----------------
+.vscode/
+.idea/
+
+# -----------------
+# Frontend
+# -----------------
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/build/
+frontend/.env*
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# -----------------
+# Folders to ignore completely
+# -----------------
+bruno/
+datasets/
