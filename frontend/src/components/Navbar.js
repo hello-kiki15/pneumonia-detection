@@ -3,19 +3,16 @@ import { Sun, Moon } from "lucide-react";
 
 const Navbar = ({ darkMode, setDarkMode, activeTab, setActiveTab }) => {
   const navbarClasses = darkMode
-    ? "bg-white/80 text-gray-900" // Light navbar in dark mode
-    : "bg-black/80 text-gray-100"; // Dark navbar in light mode
+    ? "bg-white/80 text-gray-900"
+    : "bg-black/80 text-gray-100";
 
   return (
     <header
       className={`w-full px-6 py-4 flex justify-between items-center backdrop-blur-sm transition-colors duration-300 ${navbarClasses}`}
     >
-      {/* Logo on the left */}
-      <h1 className="text-2xl font-bold">🩺 PneumoScan AI</h1>
+      <h1 className="text-2xl font-bold">PneumoScan</h1>
 
-      {/* Right Section: Navigation + Dark Mode */}
       <div className="flex items-center gap-6">
-        {/* Navigation Tabs */}
         <nav className="flex gap-6">
           <button
             className={`font-semibold pb-1 border-b-2 transition-colors duration-300 ${
@@ -39,7 +36,6 @@ const Navbar = ({ darkMode, setDarkMode, activeTab, setActiveTab }) => {
           </button>
         </nav>
 
-        {/* Dark Mode Toggle with Icon */}
         <button
           onClick={() => setDarkMode(!darkMode)}
           className={`p-2 rounded-lg transition-colors duration-300 ${

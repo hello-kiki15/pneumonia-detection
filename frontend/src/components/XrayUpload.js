@@ -5,12 +5,14 @@ const XrayUpload = ({ onResult, darkMode }) => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState("");
+  const [probability, setProbability] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0] || null;
     setFile(selectedFile);
     setResult("");
+    setProbability(null);
     setPreview(selectedFile ? URL.createObjectURL(selectedFile) : null);
   };
 
@@ -27,17 +29,20 @@ const XrayUpload = ({ onResult, darkMode }) => {
       });
 
       setResult(res.data.prediction);
+      setProbability(res.data.probability);
 
       if (onResult) {
         onResult({
           date: new Date().toLocaleString(),
           prediction: res.data.prediction,
+          probability: res.data.probability,
           preview: preview,
         });
       }
     } catch (error) {
       console.error("Upload error:", error);
-      setResult("❌ Something went wrong");
+      setResult("Something went wrong");
+      setProbability(null);
     } finally {
       setLoading(false);
     }
@@ -114,7 +119,10 @@ const XrayUpload = ({ onResult, darkMode }) => {
               : "bg-green-200/40 text-green-600 border border-green-500"
           }`}
         >
-          🩺 Prediction: {result}
+          🩺 Prediction: {result}{" "}
+          {probability !== null && (
+            <span>({(probability * 100).toFixed(2)}%)</span>
+          )}
         </div>
       )}
     </div>

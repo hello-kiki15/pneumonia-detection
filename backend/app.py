@@ -9,17 +9,17 @@ import os
 app = Flask(__name__)
 CORS(app)  
 
-MODEL_PATH = 'model/final_cnn_model.keras'  
+# MODEL_PATH = 'model/final_cnn_model.keras'  
+MODEL_PATH = 'model/pneumonia_cnn_v4b.keras'
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"Model not found at {MODEL_PATH}")
-
 model = load_model(MODEL_PATH, compile=False)
 
 def preprocess_image(img):
-    img = img.resize((224, 224))
-    img = img.convert('RGB')
+    img = img.resize((224, 224))  
+    img = img.convert('RGB')      
     img_array = image.img_to_array(img)
-    img_array = img_array / 255.0
+    img_array = img_array / 255.0  
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
@@ -35,14 +35,13 @@ def predict():
         return jsonify({'error': f'Invalid image file: {str(e)}'}), 400
 
     processed_img = preprocess_image(img)
-    prediction = model.predict(processed_img)
-
+    prediction = model.predict(processed_img)[0][0]  
     THRESHOLD = 0.5
-    result = 'Pneumonia' if prediction[0][0] >= THRESHOLD else 'Normal'
+    result = 'Pneumonia' if prediction >= THRESHOLD else 'Normal'
 
     return jsonify({
         'prediction': result,
-        'probability': float(prediction[0][0])
+        'probability': float(prediction)
     })
 
 @app.route('/', methods=['GET'])

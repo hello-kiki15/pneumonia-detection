@@ -10,7 +10,6 @@ const History = ({ history }) => {
     doc.text(`Date: ${item.date}`, 20, 35);
     doc.text(`Prediction: ${item.prediction}`, 20, 45);
 
-    // If the item has an image preview, add it to PDF
     if (item.preview) {
       const img = new Image();
       img.src = item.preview;
@@ -20,7 +19,6 @@ const History = ({ history }) => {
         const imgHeight = (img.height / img.width) * imgWidth;
         doc.addImage(img, "JPEG", 20, 55, imgWidth, imgHeight);
 
-        // Color-coded result
         doc.setTextColor(
           item.prediction.toLowerCase().includes("pneumonia") ? 255 : 0,
           item.prediction.toLowerCase().includes("pneumonia") ? 0 : 128,
