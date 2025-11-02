@@ -8,9 +8,10 @@ import os
 
 app = Flask(__name__)
 CORS(app)  
+# better model
+MODEL_PATH = 'model/final_cnn_model.keras'  
 
-# MODEL_PATH = 'model/final_cnn_model.keras'  
-MODEL_PATH = 'model/pneumonia_cnn_v4b.keras'
+# MODEL_PATH = 'model/pneumonia_cnn_v4b.keras'
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"Model not found at {MODEL_PATH}")
 model = load_model(MODEL_PATH, compile=False)
