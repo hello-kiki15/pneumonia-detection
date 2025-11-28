@@ -8,11 +8,22 @@ __pycache__/
 venv/
 env/
 *.egg-info/
+
+# backend runtime & models
+backend/venv/
+backend/__pycache__/
+backend/.env
 backend/model/
 backend/*.h5
 backend/*.keras
 backend/*.pb
 backend/*.tflite
+backend/*.pt
+backend/*.pkl
+
+# database & uploads
+backend/database.db
+backend/uploaded_images/
 
 # -----------------
 # Logs
@@ -36,10 +47,13 @@ Thumbs.db
 # Frontend
 # -----------------
 frontend/node_modules/
+frontend/build/
+frontend/dist/
 frontend/.pnp
 frontend/.pnp.js
 frontend/coverage/
-frontend/build/
+frontend/.env
+frontend/.env.local
 frontend/.env*
 frontend/npm-debug.log*
 frontend/yarn-debug.log*

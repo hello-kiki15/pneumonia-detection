@@ -2,50 +2,79 @@ import React from "react";
 import { generateAnalysisPDF } from "../utils/pdf";
 
 const History = ({ history }) => {
-  if (!history || history.length === 0) {
-    return (
-      <div className="w-full flex flex-col items-center mt-10">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-900">
-          Scan History
-        </h2>
-        <p className="text-gray-500">No scan history yet.</p>
-      </div>
-    );
-  }
+  const isPneumoniaPrediction = (prediction) =>
+    prediction?.toLowerCase().includes("pneumonia");
 
   return (
-    <div className="w-full flex flex-col items-center min-h-screen p-8">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-900">
-        Scan History
-      </h2>
+    <div className="w-full max-w-4xl">
+      {/* Page Title */}
+      <div className="mb-8 text-center">
+        <h2 className="text-3xl font-bold text-white mb-2">Scan History</h2>
+        <p className="text-gray-400">
+          View and download previous X-ray analysis reports
+        </p>
+      </div>
 
-      <ul className="w-full max-w-lg space-y-4">
-        {history.map((item, index) => {
-          const isPneumonia = item.prediction.toLowerCase().includes("pneumonia");
+      {(!history || history.length === 0) && (
+        <div className="text-center text-gray-400 mt-20">
+          No scan history yet.
+        </div>
+      )}
+
+      {/* History list */}
+      <ul className="space-y-5">
+        {history.map((item) => {
+          const pneumonia = isPneumoniaPrediction(item.prediction);
 
           return (
             <li
-              key={index}
-              className="flex justify-between items-center border rounded-lg p-4 shadow-sm"
+              key={item.id}
+              className="flex flex-col md:flex-row items-center gap-4
+                         p-5 rounded-2xl
+                         bg-gray-800/70 backdrop-blur-md
+                         border border-gray-700
+                         hover:border-emerald-600/50
+                         transition"
             >
-              <div>
-                <p className="text-gray-500 text-sm">{item.date}</p>
+              {/* Image */}
+              {item.imageUrl && (
+                <img
+                  loading="lazy"
+                  src={item.imageUrl}
+                  alt="X-ray preview"
+                  className="w-24 h-24 object-contain rounded-xl bg-black/30 border border-gray-700"
+                />
+              )}
+
+              {/* Info */}
+              <div className="flex-1 w-full">
+                <p className="text-sm text-gray-400">{item.date}</p>
+
                 {item.patientName && (
-                  <p className="text-gray-500 text-sm">👤 {item.patientName}</p>
+                  <p className="text-gray-300 font-medium mt-1">
+                    👤 {item.patientName}
+                  </p>
                 )}
+
                 <p
-                  className={`font-semibold ${
-                    isPneumonia ? "text-red-600" : "text-green-600"
+                  className={`text-lg font-semibold mt-1 ${
+                    pneumonia ? "text-red-400" : "text-green-400"
                   }`}
                 >
                   {item.prediction}
                 </p>
               </div>
+
+              {/* Actions */}
               <button
                 onClick={() => generateAnalysisPDF(item)}
-                className="px-3 py-1 text-sm rounded bg-blue-700 text-white hover:bg-blue-800 transition"
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold
+                           bg-emerald-600 text-white
+                           hover:bg-emerald-700
+                           hover:shadow-lg hover:shadow-emerald-600/40
+                           transition"
               >
-                PDF
+                Download PDF
               </button>
             </li>
           );

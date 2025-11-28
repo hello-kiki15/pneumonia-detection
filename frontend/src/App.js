@@ -1,38 +1,59 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import AnalyzePage from "./pages/AnalyzePage";
 import HistoryPage from "./pages/HistoryPage";
-import { saveHistory, loadHistory } from "./utils/storage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   const [activeTab, setActiveTab] = useState("analyze");
-  const [history, setHistory] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem("token"));
 
-  // Load history from localStorage on first render
-  useEffect(() => {
-    const storedHistory = loadHistory();
-    setHistory(storedHistory);
-  }, []);
-
-  // Add new scan to history (max 5 entries)
-  const addHistory = (item) => {
-    const updatedHistory = [item, ...history].slice(0, 10);
-    setHistory(updatedHistory);
-    saveHistory(updatedHistory); // Save to localStorage
+  const handleLogin = () => {
+    setLoggedIn(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setLoggedIn(false);
+  };
+
+  if (!loggedIn) {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <Router>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        {/* Navbar */}
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onLogout={handleLogout}
+        />
 
-      <main className="flex justify-center p-6">
-        <div className="w-full max-w-lg">
-          {activeTab === "analyze" && <AnalyzePage onResult={addHistory} />}
-
-          {activeTab === "history" && <HistoryPage history={history} />}
+        {/* Page content */}
+        <div className="pt-20">
+          {activeTab === "analyze" && <AnalyzePage />}
+          {activeTab === "history" && <HistoryPage />}
         </div>
-      </main>
-    </div>
+      </div>
+    </Router>
   );
 }
 

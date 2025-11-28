@@ -1,5 +1,7 @@
 flask
+flask-cors
+flask-bcrypt
+flask-jwt-extended
 tensorflow
 pillow
 numpy
-flask-cors
