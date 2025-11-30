@@ -1,44 +1,51 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function LoginPage({ onLogin }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Email validation
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(false);
+
+    // Validate email
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch("http://127.0.0.1:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        // store token
         localStorage.setItem("token", data.token);
+        toast.success("Login successful!");
 
-        setSuccess(true);
         setTimeout(() => {
           onLogin();
-        }, 1000);
+        }, 800);
       } else {
-        setError(data.error || "Invalid username or password. Please try again.");
+        toast.error(data.error || "Invalid email or password.");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Unable to connect to server. Please try again.");
+      toast.error("Unable to connect to server.");
     } finally {
       setLoading(false);
     }
@@ -49,26 +56,26 @@ export default function LoginPage({ onLogin }) {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-gray-400">Sign in to continue to your account</p>
+          <p className="text-gray-400">Sign in to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Username */}
+          {/* Email */}
           <div>
             <label
-              htmlFor="username"
+              htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-300"
             >
-              Username
+              Email Address
             </label>
             <input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
+              autoComplete="email"
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 transition"
             />
           </div>
@@ -106,24 +113,6 @@ export default function LoginPage({ onLogin }) {
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-300">{error}</p>
-            </div>
-          )}
-
-          {/* Success */}
-          {success && (
-            <div className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/50 rounded-lg">
-              <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-green-300">
-                Login successful! Redirecting...
-              </p>
-            </div>
-          )}
-
           {/* Submit button */}
           <button
             type="submit"
@@ -148,7 +137,7 @@ export default function LoginPage({ onLogin }) {
         {/* Register link */}
         <div className="mt-8 text-center">
           <p className="text-gray-400">
-            Don't have an account?{" "}
+            Don’t have an account?{" "}
             <Link
               to="/register"
               className="text-emerald-400 hover:text-emerald-300 font-medium underline decoration-emerald-400/30 hover:decoration-emerald-300 transition"
@@ -161,4 +150,3 @@ export default function LoginPage({ onLogin }) {
     </div>
   );
 }
-

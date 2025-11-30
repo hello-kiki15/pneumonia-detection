@@ -69,22 +69,22 @@ def home():
 @app.route("/register", methods=["POST"])
 def register():
     data = request.json
-    username = data.get("username")
+    email = data.get("email")
     password = data.get("password")
 
-    if not username or not password:
-        return jsonify({"error": "Username & password required"}), 400
+    if not email or not password:
+        return jsonify({"error": "Email & password required"}), 400
 
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM User WHERE username = ?", (username,))
+    cur.execute("SELECT * FROM User WHERE email = ?", (email,))
     if cur.fetchone():
-        return jsonify({"error": "Username already exists"}), 400
+        return jsonify({"error": "Email already exists"}), 400
 
     hashed_pw = bcrypt.generate_password_hash(password).decode("utf-8")
 
-    cur.execute("INSERT INTO User (username, password) VALUES (?, ?)", (username, hashed_pw))
+    cur.execute("INSERT INTO User (email, password) VALUES (?, ?)", (email, hashed_pw))
     conn.commit()
     conn.close()
 
@@ -94,16 +94,16 @@ def register():
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
-    username = data.get("username")
+    email = data.get("email")
     password = data.get("password")
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM User WHERE username = ?", (username,))
+    cur.execute("SELECT * FROM User WHERE email = ?", (email,))
     user = cur.fetchone()
 
     if not user or not bcrypt.check_password_hash(user["password"], password):
-        return jsonify({"error": "Invalid username or password"}), 401
+        return jsonify({"error": "Invalid email or password"}), 401
 
     token = create_access_token(identity=str(user["id"]))
     return jsonify({"token": token})

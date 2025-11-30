@@ -6,6 +6,8 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import { Toaster } from "react-hot-toast";  // <-- import Toaster
+
 import Navbar from "./components/Navbar";
 import AnalyzePage from "./pages/AnalyzePage";
 import HistoryPage from "./pages/HistoryPage";
@@ -28,6 +30,7 @@ function App() {
   if (!loggedIn) {
     return (
       <Router>
+        <Toaster position="top-center" />   {/* <-- Add Toaster here */}
         <Routes>
           <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -39,6 +42,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-center" />   {/* <-- And add Toaster here */}
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         {/* Navbar */}
         <Navbar

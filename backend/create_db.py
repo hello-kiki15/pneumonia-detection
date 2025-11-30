@@ -10,16 +10,16 @@ if os.path.exists(DB_FILE):
 conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 
-# User table
+# User table 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS User (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL
 );
 """)
 
-# Image table 
+# Image table
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS Image (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,4 +36,4 @@ CREATE TABLE IF NOT EXISTS Image (
 conn.commit()
 conn.close()
 
-print("Fresh database created with all tables and columns!")
+print("Fresh database created with email field and all tables!")

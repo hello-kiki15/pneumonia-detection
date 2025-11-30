@@ -1,48 +1,57 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Email validation function
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
-    setError(null);
+
+    // Validate email before submitting
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch("http://127.0.0.1:5000/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Registration successful! Redirecting to login...");
-        setUsername("");
+        toast.success("Registration successful! Redirecting to login...");
+        setEmail("");
         setPassword("");
 
         setTimeout(() => {
           window.location.href = "/login";
         }, 1800);
       } else {
-        setError(
+        toast.error(
           data.error ||
-            "Username already exists or registration failed. Please try a different username."
+            "Email already exists or registration failed. Please try again."
         );
       }
     } catch (err) {
-      console.error("Registration error:", err);
-      setError(
+      toast.error(
         "Unable to connect to server. Please check your connection and try again."
       );
+      console.error("Registration error:", err);
     } finally {
       setLoading(false);
     }
@@ -56,27 +65,28 @@ export default function RegisterPage() {
           <p className="text-gray-400">Sign up to get started</p>
         </div>
 
-        {/* FORM FIXED HERE */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email */}
           <div>
             <label
-              htmlFor="username"
+              htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-300"
             >
-              Username
+              Email Address
             </label>
             <input
-              id="username"
-              type="text"
-              placeholder="Choose a username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
+              autoComplete="email"
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 transition"
             />
           </div>
 
+          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -101,25 +111,16 @@ export default function RegisterPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
 
-          {error && (
-            <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-300">{error}</p>
-            </div>
-          )}
-
-          {message && (
-            <div className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/50 rounded-lg">
-              <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-green-300">{message}</p>
-            </div>
-          )}
-
+          {/* Submit button */}
           <button
             type="submit"
             disabled={loading}
